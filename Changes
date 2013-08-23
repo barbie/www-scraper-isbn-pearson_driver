@@ -1,5 +1,10 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Pearson_Driver.
 
+0.09	26/07/2007
+	- added test to check for non-existent ISBNs
+	- updated first book test to a new book, Perl Medic looks to be out of 
+	  print :(
+
 0.08	01/03/2007
 	- Handwritten META.yml to conform to current specs.
 	- Changed all instances of LICENCE to LICENSE.

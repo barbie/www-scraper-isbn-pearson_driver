@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.08';
+$VERSION = '0.09';
 
 #--------------------------------------------------------------------------
 
@@ -94,13 +94,15 @@ sub search {
 	$mechanize->set_fields( 'txtSearch' => $isbn );
 	$mechanize->submit();
 
-	return $self->handler("Failed to find book on Pearson Education website.")
+	return $self->handler("Failed to find that book on Pearson Education website.")
 	    unless($mechanize->success());
-
-#print STDERR "\n# content1=[".$mechanize->content()."]\n";
 
 	# The Book page
     my $html = $mechanize->content();
+#print STDERR "\n# content1=[\n$html\n]\n";
+
+	return $self->handler("Failed to find that book on Pearson Education website.")
+		if($html =~ m!Your search for <b>\d+</b> returned 0 results!si);
 
     my $data;
     ($data->{image},$data->{thumb})    = $html =~ m!<a href="(http://images.pearsoned-ema.com/jpeg/[^"]+)"><img src="(http://images.pearsoned-ema.com/jpeg/[^"]+)"!i;
@@ -110,8 +112,10 @@ sub search {
     ($data->{description})             = $html =~ m!<a name='Description'></a><span class='bodybold'>Description</span><br>(.*?)</td>!is;
     ($data->{bookid})                  = $html =~ m!recommend.asp\?item=(\d+)!i;
 
-    $data->{description} =~ s!^.*?<P>(.*?)</P>.*!$1!gis;
-    $data->{description} =~ s!\s+$!!gis;
+    if($data->{description}) {
+        $data->{description} =~ s!^.*?<P>(.*?)</P>.*!$1!gis;
+        $data->{description} =~ s!\s+$!!gis;
+    }
 
 	return $self->handler("Could not extract data from Pearson Education result page.")
 		unless(defined $data);
@@ -128,7 +132,11 @@ sub search {
 		'pubdate'		=> $data->{pubdate},
 		'publisher'		=> q!Pearson Education!,
 	};
-	$self->book($bk);
+
+#use Data::Dumper;
+#print STDERR "\n# book=".Dumper($bk);
+
+    $self->book($bk);
 	$self->found(1);
 	return $self->book;
 }
@@ -157,7 +165,6 @@ L<WWW::Scraper::ISBN::Driver>
 =head1 COPYRIGHT & LICENSE
 
   Copyright (C) 2004-2007 Barbie for Miss Barbell Productions
-  All Rights Reserved.
 
   This module is free software; you can redistribute it and/or 
   modify it under the same terms as Perl itself.
