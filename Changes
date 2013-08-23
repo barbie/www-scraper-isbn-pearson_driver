@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Pearson_Driver.
 
+0.07	02/03/2005
+	- book_link made from bookid stored in the page
+
 0.06	07/01/2001  
 	- handler() moved to WWW::Scraper::ISBN::Driver
 	- test suite updated to peform skips if can't access web pages

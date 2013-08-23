@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.06';
+$VERSION = '0.07';
 
 #--------------------------------------------------------------------------
 
@@ -22,21 +22,18 @@ Searches for book information from the Pearson Education's online catalog.
 
 =cut
 
-### CHANGES ###############################################################
-#   0.01	07/04/2004	Initial Release
-#   0.03	10/05/2004	Added publisher attribute
-#   0.04	07/06/2004	Simplified extract string
-#   0.05	31/08/2004	Simplified error handling
-#   0.06	07/01/2001  handler() moved to WWW::Scraper::ISBN::Driver
+#--------------------------------------------------------------------------
+
+###########################################################################
+#Inheritence		                                                      #
 ###########################################################################
 
-#--------------------------------------------------------------------------
+use base qw(WWW::Scraper::ISBN::Driver);
 
 ###########################################################################
 #Library Modules                                                          #
 ###########################################################################
 
-use WWW::Scraper::ISBN::Driver;
 use WWW::Mechanize;
 use Template::Extract;
 
@@ -45,14 +42,9 @@ use Template::Extract;
 ###########################################################################
 
 use constant	SEARCH	=> 'http://www.pearsoned.co.uk/Bookshop/';
+use constant	DETAIL	=> 'http://www.pearsoned.co.uk/Bookshop/detail.asp?item=';
 
 #--------------------------------------------------------------------------
-
-###########################################################################
-#Inheritence		                                                      #
-###########################################################################
-
-@ISA = qw(WWW::Scraper::ISBN::Driver);
 
 ###########################################################################
 #Interface Functions                                                      #
@@ -108,6 +100,7 @@ sub search {
 <a href="[% image %]"><img src="[% thumb %]" border="1" align="left" alt="[% ... %]"></a>[% ... %]
 <span class='largerbodybold'>[% title %]</span><br><span class='body'>[% author %]</span><br><span class = 'body'>[% isbn %]</span><span class='body'>[% ... %]</span><span class='body'>&nbsp;[% pubdate %],</span>[% ... %]
 <span class='bodybold'>Description</span>[% description %]<a href='#topofpage'>top</a>[% ... %]
+voucher.asp?item=[% bookid %]&title=[% ... %]
 END
 
 #	print STDERR $mechanize->content();
@@ -124,7 +117,7 @@ END
 		'isbn'			=> $data->{isbn},
 		'author'		=> $data->{author},
 		'title'			=> $data->{title},
-		'book_link'		=> $mechanize->uri(),
+		'book_link'		=> DETAIL.$data->{bookid},	#$mechanize->uri(),
 		'image_link'	=> $data->{image},
 		'thumb_link'	=> $data->{thumb},
 		'description'	=> $data->{description},
