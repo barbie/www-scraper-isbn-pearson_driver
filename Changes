@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Pearson_Driver.
 
+0.13    30/07/2010
+        - documentation fixes.
+
 0.12    30/07/2010
         - updates to parser for Pearson site.
         - added fields (if known) for binding, pages, weight, width & height.

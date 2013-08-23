@@ -1,7 +1,7 @@
 {
     "name": "WWW-Scraper-ISBN-Pearson_Driver",
-    "version": "0.12",
-    "abstract": "Search drivers for the ORA online book catalog.",
+    "version": "0.13",
+    "abstract": "Search driver for the Pearson Education online book catalog",
     "author": ["Barbie <barbie@cpan.org>"],
 
     "license": "artistic_2",
@@ -43,7 +43,7 @@
     "provides": {
         "WWW::Scraper::ISBN::Pearson_Driver": {
             "file": "lib/WWW/Scraper/ISBN/Pearson_Driver.pm",
-            "version": "0.12"
+            "version": "0.13"
         }
     },
     "no_index": {

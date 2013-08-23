@@ -11,6 +11,6 @@ WriteMakefile(
 	NO_META			=> 1,
 
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
-      (ABSTRACT => q|Search driver for Pearson Education's online catalog|,
+      (ABSTRACT => q|Search driver for the Pearson Education online book catalog|,
        AUTHOR     => 'Barbie <barbie@cpan.org>') : ()),
 );

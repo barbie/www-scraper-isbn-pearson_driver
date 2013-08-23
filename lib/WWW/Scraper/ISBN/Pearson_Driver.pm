@@ -4,13 +4,13 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.12';
+$VERSION = '0.13';
 
 #--------------------------------------------------------------------------
 
 =head1 NAME
 
-WWW::Scraper::ISBN::Pearson_Driver - Search driver for Pearson Education's online catalog.
+WWW::Scraper::ISBN::Pearson_Driver - Search driver for the Pearson Education online book catalog.
 
 =head1 SYNOPSIS
 
