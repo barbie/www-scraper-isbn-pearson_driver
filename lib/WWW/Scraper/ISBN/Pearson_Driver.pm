@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.07';
+$VERSION = '0.08';
 
 #--------------------------------------------------------------------------
 
@@ -35,7 +35,6 @@ use base qw(WWW::Scraper::ISBN::Driver);
 ###########################################################################
 
 use WWW::Mechanize;
-use Template::Extract;
 
 ###########################################################################
 #Constants                                                                #
@@ -63,6 +62,7 @@ The returned page should be the correct catalog page for that ISBN. If not the
 function returns zero and allows the next driver in the chain to have a go. If
 a valid page is returned, the following fields are returned via the book hash:
 
+  isbn13
   isbn
   author
   title
@@ -86,35 +86,39 @@ sub search {
 
 	my $mechanize = WWW::Mechanize->new();
 	$mechanize->get( SEARCH );
-	return undef	unless($mechanize->success());
+
+    return $self->handler("Pearson Education website appears to be unavailable.")
+	    unless($mechanize->success());
 
 	$mechanize->form_name('frmSearch');
 	$mechanize->set_fields( 'txtSearch' => $isbn );
 	$mechanize->submit();
 
-	return undef	unless($mechanize->success());
+	return $self->handler("Failed to find book on Pearson Education website.")
+	    unless($mechanize->success());
+
+#print STDERR "\n# content1=[".$mechanize->content()."]\n";
 
 	# The Book page
-	my $template = <<END;
-	<TABLE width="450" border="0" cellpadding="0" cellspacing="0">[% ... %]
-<a href="[% image %]"><img src="[% thumb %]" border="1" align="left" alt="[% ... %]"></a>[% ... %]
-<span class='largerbodybold'>[% title %]</span><br><span class='body'>[% author %]</span><br><span class = 'body'>[% isbn %]</span><span class='body'>[% ... %]</span><span class='body'>&nbsp;[% pubdate %],</span>[% ... %]
-<span class='bodybold'>Description</span>[% description %]<a href='#topofpage'>top</a>[% ... %]
-voucher.asp?item=[% bookid %]&title=[% ... %]
-END
+    my $html = $mechanize->content();
 
-#	print STDERR $mechanize->content();
+    my $data;
+    ($data->{image},$data->{thumb})    = $html =~ m!<a href="(http://images.pearsoned-ema.com/jpeg/[^"]+)"><img src="(http://images.pearsoned-ema.com/jpeg/[^"]+)"!i;
+    ($data->{title})                   = $html =~ m!<H1 class='largerbodybold'>(.*?)</H1>!i;
+    ($data->{author},$data->{pubdate}) = $html =~ m!<H2 class='body' ><a title=[^>]+>(.*?)</a></H2><span class='body'>(.*?)</span>!i;
+    ($data->{isbn13},$data->{isbn10})  = $html =~ m!ISBN13: ([\d]+)</span><br><span class = 'body'>ISBN10: ([-\d]+)</span>!i;
+    ($data->{description})             = $html =~ m!<a name='Description'></a><span class='bodybold'>Description</span><br>(.*?)</td>!is;
+    ($data->{bookid})                  = $html =~ m!recommend.asp\?item=(\d+)!i;
 
-	my $extract = Template::Extract->new;
-    my $data = $extract->extract($template, $mechanize->content());
+    $data->{description} =~ s!^.*?<P>(.*?)</P>.*!$1!gis;
+    $data->{description} =~ s!\s+$!!gis;
 
 	return $self->handler("Could not extract data from Pearson Education result page.")
 		unless(defined $data);
 
-	$data->{author} =~ s/.*>//;
-
 	my $bk = {
-		'isbn'			=> $data->{isbn},
+		'isbn13'		=> $data->{isbn13},
+		'isbn'			=> $data->{isbn10},
 		'author'		=> $data->{author},
 		'title'			=> $data->{title},
 		'book_link'		=> DETAIL.$data->{bookid},	#$mechanize->uri(),
@@ -136,40 +140,30 @@ __END__
 
 Requires the following modules be installed:
 
-=over 4
-
-=item L<WWW::Scraper::ISBN::Driver>
-
-=item L<WWW::Mechanize>
-
-=item L<Template::Extract>
-
-=back
+L<WWW::Scraper::ISBN::Driver>,
+L<WWW::Mechanize>
 
 =head1 SEE ALSO
 
-=over 4
-
-=item L<WWW::Scraper::ISBN>
-
-=item L<WWW::Scraper::ISBN::Record>
-
-=item L<WWW::Scraper::ISBN::Driver>
-
-=back
+L<WWW::Scraper::ISBN>,
+L<WWW::Scraper::ISBN::Record>,
+L<WWW::Scraper::ISBN::Driver>
 
 =head1 AUTHOR
 
-  Barbie, E<lt>barbie@cpan.orgE<gt>
-  Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
+  Barbie, <barbie@cpan.org>
+  Miss Barbell Productions, <http://www.missbarbell.co.uk/>
 
-=head1 COPYRIGHT
+=head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2004-2005 Barbie for Miss Barbell Productions
+  Copyright (C) 2004-2007 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or 
   modify it under the same terms as Perl itself.
 
-=cut
+The full text of the licenses can be found in the F<Artistic> file included 
+with this module, or in L<perlartistic> as part of Perl installation, in 
+the 5.8.1 release or later.
 
+=cut

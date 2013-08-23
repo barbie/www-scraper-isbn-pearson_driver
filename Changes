@@ -1,5 +1,18 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Pearson_Driver.
 
+0.08	01/03/2007
+	- Handwritten META.yml to conform to current specs.
+	- Changed all instances of LICENCE to LICENSE.
+	- Added META.yml test script.
+	- Added LICENSE and Artistic files.
+	- Added an examples directory. Nothing in it yet, except a request
+	  for interesting scripts.
+	- Updated the pattern matching code now that Yahoo have changed their 
+	  page layouts.
+	- Added better error reporting.
+	- Removed dependency on Template::Extract.
+	- Devel::Cover = 95.2%
+
 0.07	02/03/2005
 	- book_link made from bookid stored in the page
 

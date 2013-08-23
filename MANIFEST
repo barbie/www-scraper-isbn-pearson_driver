@@ -1,10 +1,14 @@
+Artistic
 Changes
-Makefile.PL
+LICENSE
 MANIFEST
+META.yml
+Makefile.PL
 README
+examples/examples.txt
 lib/WWW/Scraper/ISBN/Pearson_Driver.pm
 t/01basic.t
 t/10object.t
 t/91pod.t
 t/92podcover.t
-META.yml                                Module meta-data (added by MakeMaker)
+t/94metatest.t

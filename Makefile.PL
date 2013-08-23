@@ -11,6 +11,8 @@ WriteMakefile(
 		Template::Extract			=> 0,
 		Test::More					=> 0.45,	# for testing
 	},
+	NO_META			=> 1,
+
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
       (ABSTRACT => q|Search driver for Pearson Education's online catalog|, # retrieve abstract from module
        AUTHOR     => 'Barbie <barbie@cpan.org>') : ()),
