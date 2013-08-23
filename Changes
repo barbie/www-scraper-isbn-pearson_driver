@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Pearson_Driver.
 
+0.05	31/08/2004
+	- Simplified error handling
+
 0.04	07/06/2004
 	- Simplified extract string
 

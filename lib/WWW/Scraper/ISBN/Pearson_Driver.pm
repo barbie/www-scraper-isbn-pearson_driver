@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.04';
+$VERSION = '0.05';
 
 #--------------------------------------------------------------------------
 
@@ -26,6 +26,7 @@ Searches for book information from the Pearson Education's online catalog.
 #   0.01	07/04/2004	Initial Release
 #   0.03	10/05/2004	Added publisher attribute
 #   0.04	07/06/2004	Simplified extract string
+#   0.05	31/08/2004	Simplified error handling
 ###########################################################################
 
 #--------------------------------------------------------------------------
@@ -113,12 +114,8 @@ END
 	my $extract = Template::Extract->new;
     my $data = $extract->extract($template, $mechanize->content());
 
-	unless(defined $data) {
-		print "Error extracting data from Pearson Education result page.\n"	if $self->verbosity;
-		$self->error("Could not extract data from Pearson Education result page.\n");
-		$self->found(0);
-		return 0;
-	}
+	return $self->_error_handler("Could not extract data from Pearson Education result page.")
+		unless(defined $data);
 
 	$data->{author} =~ s/.*>//;
 
@@ -136,6 +133,15 @@ END
 	$self->book($bk);
 	$self->found(1);
 	return $self->book;
+}
+
+sub _error_handler {
+	my $self = shift;
+	my $mess = shift;
+	print "Error: $mess\n"	if $self->verbosity;
+	$self->error("$mess\n");
+	$self->found(0);
+	return 0;
 }
 
 1;
