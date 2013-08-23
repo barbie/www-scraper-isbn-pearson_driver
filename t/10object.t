@@ -85,6 +85,8 @@ SKIP: {
         SKIP: {
             skip "Website unavailable", scalar(@{ $tests{$isbn} }) + 2   
                 if($error =~ /website appears to be unavailable/);
+            skip "Book unavailable", scalar(@{ $tests{$isbn} }) + 2   
+                if($error =~ /Failed to find that book/ || !$record->found);
 
             unless($record->found) {
                 diag($record->error);
@@ -118,8 +120,12 @@ sub pingtest {
                 $^O =~ /dos|os2|mswin32|netware|cygwin/i    ? "ping -n 1 $domain "
                                                             : "ping -c 1 $domain >/dev/null 2>&1";
 
-    system($cmd);
-    my $retcode = $? >> 8;
-    # ping returns 1 if unable to connect
+    eval { system($cmd) }; 
+    if($@) {                # can't find ping, or wrong arguments?
+        diag();
+        return 1;
+    }
+
+    my $retcode = $? >> 8;  # ping returns 1 if unable to connect
     return $retcode;
 }

@@ -1,6 +1,6 @@
 {
     "name": "WWW-Scraper-ISBN-Pearson_Driver",
-    "version": "0.17",
+    "version": "0.18",
     "abstract": "Search driver for the Pearson Education online book catalog",
     "author": ["Barbie <barbie@cpan.org>"],
 
@@ -35,7 +35,7 @@
                 "Test::Pod": "1.00",
                 "Test::Pod::Coverage": "0.08",
                 "Test::CPAN::Meta": "0.13",
-                "Test::JSON::Meta": "0.08"
+                "Test::CPAN::Meta::JSON": "0.10"
             }
         }
     },
@@ -43,7 +43,7 @@
     "provides": {
         "WWW::Scraper::ISBN::Pearson_Driver": {
             "file": "lib/WWW/Scraper/ISBN/Pearson_Driver.pm",
-            "version": "0.17"
+            "version": "0.18"
         }
     },
     "no_index": {

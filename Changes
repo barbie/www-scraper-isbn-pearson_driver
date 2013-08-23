@@ -1,5 +1,11 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Pearson_Driver.
 
+0.18    04/05/2011
+        - amended pingtest() in network tests.
+        - added further skip test if test books are withdrawn from the site.
+        - upgraded to Test::CPAN::Meta::JSON for tests.
+        - image link updates due to site changes.
+
 0.17    06/10/2010
         - provided alternate ping test methods.
 

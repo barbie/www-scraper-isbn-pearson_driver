@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.17';
+$VERSION = '0.18';
 
 #--------------------------------------------------------------------------
 
@@ -109,7 +109,7 @@ sub search {
 		if($html =~ m!<p>Your search for <b>\d+</b> returned 0 results. Please search again.</p>!si);
 
     my $data;
-    ($data->{image},$data->{thumb})     = $html =~ m!<a href="(http://images.pearsoned-ema.com/jpeg/[^"]+)"><img src="(http://images.pearsoned-ema.com/jpeg/[^"]+)"!si;
+    ($data->{image},$data->{thumb})     = $html =~ m!<a id="large-jacket-img" href="(http://images.pearsoned-ema.com/jpeg/[^"]+)"><img src="(http://images.pearsoned-ema.com/jpeg/[^"]+)"!si;
     ($data->{title})                    = $html =~ m!<div class="biblio">\s*<h1 class="larger bold">(.*?)</h1>!si;
     ($data->{author},$data->{pubdate},$data->{binding},$data->{pages}) 
                                         = $html =~ m!<h2 class="body"><a title=[^>]+>(.*?)</a></h2>([^,]+),\s*([^,<]+)(?:,\s*([^<]+)pages)?<br />!si;
@@ -189,7 +189,7 @@ be forthcoming, please feel free to (politely) remind me.
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2004-2010 Barbie for Miss Barbell Productions
+  Copyright (C) 2004-2011 Barbie for Miss Barbell Productions
 
   This module is free software; you can redistribute it and/or
   modify it under the Artistic Licence v2.
