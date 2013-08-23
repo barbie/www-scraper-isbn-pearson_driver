@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.03';
+$VERSION = '0.04';
 
 #--------------------------------------------------------------------------
 
@@ -24,8 +24,8 @@ Searches for book information from the Pearson Education's online catalog.
 
 ### CHANGES ###############################################################
 #   0.01	07/04/2004	Initial Release
-#	0.02	19/04/2004	Test::More added as a prerequisites for PPMs
-#	0.03	11/05/2004	Added publisher as a book attribute
+#   0.03	10/05/2004	Added publisher attribute
+#   0.04	07/06/2004	Simplified extract string
 ###########################################################################
 
 #--------------------------------------------------------------------------
@@ -42,7 +42,6 @@ use Template::Extract;
 #Constants                                                                #
 ###########################################################################
 
-use constant	PEARSON	=> 'http://www.pearsoned.co.uk/Bookshop/detail.asp?item=';
 use constant	SEARCH	=> 'http://www.pearsoned.co.uk/Bookshop/';
 
 #--------------------------------------------------------------------------
@@ -103,29 +102,16 @@ sub search {
 
 	# The Book page
 	my $template = <<END;
-<TABLE width="450" border="0" cellpadding="0" cellspacing="0">[% ... %]
+	<TABLE width="450" border="0" cellpadding="0" cellspacing="0">[% ... %]
 <a href="[% image %]"><img src="[% thumb %]" border="1" align="left" alt="[% ... %]"></a>[% ... %]
-<span class='largerbodybold'>[% title %]</span>[% /<br><span class='body'>[^<]+<.span>/ %]<br><span class='body'>[% author %]</span><br><span class = 'body'>[% isbn %]</span><span class='body'>[% ... %]</span><span class='body'>&nbsp;[% pubdate %],</span>[% ... %]
+<span class='largerbodybold'>[% title %]</span><br><span class='body'>[% author %]</span><br><span class = 'body'>[% isbn %]</span><span class='body'>[% ... %]</span><span class='body'>&nbsp;[% pubdate %],</span>[% ... %]
 <span class='bodybold'>Description</span>[% description %]<a href='#topofpage'>top</a>[% ... %]
-<td class="rightlinks" height="15" align='left'><a href="voucher.asp?item=[% code %]&title=[% ... %]" class="rightlinks">Voucher Code</a></td>
 END
 
 #	print STDERR $mechanize->content();
 
 	my $extract = Template::Extract->new;
     my $data = $extract->extract($template, $mechanize->content());
-
-	# Try second style if first fails
-	unless(defined $data) {
-		$template = <<END;
-<TABLE width="450" border="0" cellpadding="0" cellspacing="0">[% ... %]
-<a href="[% image %]"><img src="[% thumb %]" border="1" align="left" alt="[% ... %]"></a>[% ... %]
-<span class='largerbodybold'>[% title %]</span><br><span class='body'>[% author %]</span><br><span class = 'body'>[% isbn %]</span><span class='body'>[% ... %]</span><span class='body'>&nbsp;[% pubdate %],</span>[% ... %]
-<span class='bodybold'>Description</span>[% description %]<a href='#topofpage'>top</a>[% ... %]
-<td class="rightlinks" height="15" align='left'><a href="voucher.asp?item=[% code %]&title=[% ... %]" class="rightlinks">Voucher Code</a></td>
-END
-		$data = $extract->extract($template, $mechanize->content());
-	}
 
 	unless(defined $data) {
 		print "Error extracting data from Pearson Education result page.\n"	if $self->verbosity;
@@ -134,16 +120,18 @@ END
 		return 0;
 	}
 
+	$data->{author} =~ s/.*>//;
+
 	my $bk = {
 		'isbn'			=> $data->{isbn},
 		'author'		=> $data->{author},
 		'title'			=> $data->{title},
-		'book_link'		=> PEARSON . $data->{code},
+		'book_link'		=> $mechanize->uri(),
 		'image_link'	=> $data->{image},
 		'thumb_link'	=> $data->{thumb},
 		'description'	=> $data->{description},
 		'pubdate'		=> $data->{pubdate},
-		'publisher'		=> 'Pearson Education',
+		'publisher'		=> q!Pearson Education!,
 	};
 	$self->book($bk);
 	$self->found(1);
