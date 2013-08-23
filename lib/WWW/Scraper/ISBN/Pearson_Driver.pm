@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.15';
+$VERSION = '0.16';
 
 #--------------------------------------------------------------------------
 
@@ -109,13 +109,13 @@ sub search {
 		if($html =~ m!<p>Your search for <b>\d+</b> returned 0 results. Please search again.</p>!si);
 
     my $data;
-    ($data->{image},$data->{thumb})     = $html =~ m!<a href="(http://images.pearsoned-ema.com/jpeg/[^"]+)"><img src="(http://images.pearsoned-ema.com/jpeg/[^"]+)"!i;
-    ($data->{title})                    = $html =~ m!<div class="biblio">\s*<h1 class="larger bold">(.*?)</h1>!i;
+    ($data->{image},$data->{thumb})     = $html =~ m!<a href="(http://images.pearsoned-ema.com/jpeg/[^"]+)"><img src="(http://images.pearsoned-ema.com/jpeg/[^"]+)"!si;
+    ($data->{title})                    = $html =~ m!<div class="biblio">\s*<h1 class="larger bold">(.*?)</h1>!si;
     ($data->{author},$data->{pubdate},$data->{binding},$data->{pages}) 
-                                        = $html =~ m!<h2 class="body"><a title=[^>]+>(.*?)</a></h2>([^,]+),\s*([^,<]+)(?:,\s*([^<]+)pages)?<br />!i;
-    ($data->{isbn13},$data->{isbn10})   = $html =~ m!ISBN13:\s*(\d+)\s*<br />ISBN10:\s*(\d+)!i;
+                                        = $html =~ m!<h2 class="body"><a title=[^>]+>(.*?)</a></h2>([^,]+),\s*([^,<]+)(?:,\s*([^<]+)pages)?<br />!si;
+    ($data->{isbn13},$data->{isbn10})   = $html =~ m!ISBN13:\s*(\d+)\s*<br />ISBN10:\s*(\d+)!si;
     ($data->{description})              = $html =~ m!<div class="desc-text"><p><p>([^<]+)!is;
-    ($data->{bookid})                   = $html =~ m!recommend.asp\?item=(\d+)!i;
+    ($data->{bookid})                   = $html =~ m!recommend.asp\?item=(\d+)!si;
 
 #use Data::Dumper;
 #print STDERR "\n# " . Dumper($data);
