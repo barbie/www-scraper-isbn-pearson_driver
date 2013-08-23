@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 #--------------------------------------------------------------------------
 
@@ -23,7 +23,8 @@ Searches for book information from the Pearson Education's online catalog.
 =cut
 
 ### CHANGES ###############################################################
-#   0.01   07/04/2004   Initial Release
+#   0.01	07/04/2004	Initial Release
+#	0.02	19/04/2004	Test::More added as a prerequisites for PPMs
 ###########################################################################
 
 #--------------------------------------------------------------------------
