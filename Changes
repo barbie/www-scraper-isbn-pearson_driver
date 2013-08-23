@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Pearson_Driver.
 
+0.03	11/05/2004
+		- Added publisher as a book attribute
+
 0.02	19/04/2004
 		- Test::More added as a prerequisites for PPMs
 
