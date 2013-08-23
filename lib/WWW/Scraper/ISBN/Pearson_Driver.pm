@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.10';
+$VERSION = '0.11';
 
 #--------------------------------------------------------------------------
 
@@ -85,6 +85,7 @@ sub search {
 	$self->book(undef);
 
 	my $mechanize = WWW::Mechanize->new();
+    $mechanize->agent_alias( 'Linux Mozilla' );
 	$mechanize->get( SEARCH );
 
     return $self->handler("Pearson Education website appears to be unavailable.")
@@ -102,7 +103,7 @@ sub search {
 #print STDERR "\n# content1=[\n$html\n]\n";
 
 	return $self->handler("Failed to find that book on Pearson Education website.")
-		if($html =~ m!Your search for <b>\d+</b> returned 0 results!si);
+		if($html =~ m!<span class='trail2'>Advanced Search</span>!si);
 
     my $data;
     ($data->{image},$data->{thumb})    = $html =~ m!<a href="(http://images.pearsoned-ema.com/jpeg/[^"]+)"><img src="(http://images.pearsoned-ema.com/jpeg/[^"]+)"!i;
@@ -126,7 +127,7 @@ sub search {
 		'isbn'			=> $data->{isbn10},
 		'author'		=> $data->{author},
 		'title'			=> $data->{title},
-		'book_link'		=> DETAIL.$data->{bookid},	#$mechanize->uri(),
+		'book_link'		=> $mechanize->uri(),   #DETAIL . $data->{bookid},
 		'image_link'	=> $data->{image},
 		'thumb_link'	=> $data->{thumb},
 		'description'	=> $data->{description},

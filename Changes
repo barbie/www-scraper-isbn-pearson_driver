@@ -1,6 +1,12 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Pearson_Driver.
 
-0.10	current
+0.11	14/08/2009
+	- minor fixes to parsing of Pearson website.
+	- added ping tests, to avoid failing when no network connection.
+	- real failures produce diagnostics not skips now.
+	- added more package tests.
+
+0.10	27/06/2008
 	- added checks to only run extra tests under AUTOMATED_TESTING
 	- switched metatest to use Test-CPAN-Meta
 	- upped META.ym spec version and link

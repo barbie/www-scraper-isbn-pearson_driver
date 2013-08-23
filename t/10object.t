@@ -6,9 +6,12 @@ use Test::More tests => 22;
 
 ###########################################################
 
-	use WWW::Scraper::ISBN;
-	my $scraper = WWW::Scraper::ISBN->new();
-	isa_ok($scraper,'WWW::Scraper::ISBN');
+use WWW::Scraper::ISBN;
+my $scraper = WWW::Scraper::ISBN->new();
+isa_ok($scraper,'WWW::Scraper::ISBN');
+
+SKIP: {
+	skip "Can't see a network connection", 21   if(pingtest());
 
 	$scraper->drivers("Pearson");
 
@@ -28,9 +31,9 @@ use Test::More tests => 22;
 	$isbn = "1932394508";
 	$record = $scraper->search($isbn);
 
-    SKIP: {
-		skip($record->error . "\n",10)	unless($record->found);
-
+    unless($record->found) {
+		diag($record->error);
+    } else {
 		is($record->found,1);
 		is($record->found_in,'Pearson');
 
@@ -48,9 +51,9 @@ use Test::More tests => 22;
 	$isbn = "0672320673";
 	$record = $scraper->search($isbn);
 
-	SKIP: {
-		skip($record->error . "\n",10)	unless($record->found);
-
+    unless($record->found) {
+		diag($record->error);
+    } else {
 		is($record->found,1);
 		is($record->found_in,'Pearson');
 
@@ -63,7 +66,18 @@ use Test::More tests => 22;
 		is($book->{'thumb_link'},'http://images.pearsoned-ema.com/jpeg/small/9780672320675.jpg');
 		like($book->{'description'},qr|In addition to providing a complete syntax reference for all core Perl functions|);
 		is($book->{'pubdate'},'Jul 2001');
+
+        #use Data::Dumper;
+        #diag("book=[".Dumper($book)."]");
 	}
+}
 
 ###########################################################
 
+# crude, but it'll hopefully do ;)
+sub pingtest {
+  system("ping -q -c 1 www.google.com >/dev/null 2>&1");
+  my $retcode = $? >> 8;
+  # ping returns 1 if unable to connect
+  return $retcode;
+}

@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                   WWW-Scraper-ISBN-Pearson_Driver
-version:                0.10
+version:                0.11
 abstract:               Search driver for Pearson Education's online catalog
 author:
   - Barbie <barbie@cpan.org>
@@ -25,7 +25,7 @@ build_requires:
 provides:
   WWW::Scraper::ISBN::Pearson_Driver:
     file:     lib/WWW/Scraper/ISBN/Pearson_Driver.pm
-    version:  0.10
+    version:  0.11
 no_index:
   directory:
     - t

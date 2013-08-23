@@ -12,3 +12,4 @@ t/10object.t
 t/91pod.t
 t/92podcover.t
 t/94metatest.t
+t/95changedate.t
