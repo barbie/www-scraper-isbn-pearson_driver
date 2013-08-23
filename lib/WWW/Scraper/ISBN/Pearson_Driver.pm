@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.14';
+$VERSION = '0.15';
 
 #--------------------------------------------------------------------------
 
@@ -92,14 +92,14 @@ sub search {
 
 	eval { $mech->get( SEARCH ) };
     return $self->handler("Pearson Education website appears to be unavailable.")
-	    unless($@ || $mech->success());
+	    if($@ || !$mech->success() || !$mech->content());
 
 	$mech->form_id('frmSearch');
 	$mech->set_fields( 'txtSearch' => $isbn );
 	
     eval { $mech->submit() };
 	return $self->handler("Failed to find that book on Pearson Education website.")
-	    unless($@ || $mech->success());
+	    if($@ || !$mech->success() || !$mech->content());
 
 	# The Book page
     my $html = $mech->content();
