@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Pearson_Driver.
 
+0.14    02/08/2010
+        - added connection protection if client or server offline.
+        - documentation updates.
+
 0.13    30/07/2010
         - documentation fixes.
 

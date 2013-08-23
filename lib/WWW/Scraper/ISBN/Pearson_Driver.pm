@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.13';
+$VERSION = '0.14';
 
 #--------------------------------------------------------------------------
 
@@ -87,22 +87,22 @@ sub search {
 	$self->found(0);
 	$self->book(undef);
 
-	my $mechanize = WWW::Mechanize->new();
-    $mechanize->agent_alias( 'Linux Mozilla' );
-	$mechanize->get( SEARCH );
+	my $mech = WWW::Mechanize->new();
+    $mech->agent_alias( 'Linux Mozilla' );
 
+	eval { $mech->get( SEARCH ) };
     return $self->handler("Pearson Education website appears to be unavailable.")
-	    unless($mechanize->success());
+	    unless($@ || $mech->success());
 
-	$mechanize->form_id('frmSearch');
-	$mechanize->set_fields( 'txtSearch' => $isbn );
-	$mechanize->submit();
-
+	$mech->form_id('frmSearch');
+	$mech->set_fields( 'txtSearch' => $isbn );
+	
+    eval { $mech->submit() };
 	return $self->handler("Failed to find that book on Pearson Education website.")
-	    unless($mechanize->success());
+	    unless($@ || $mech->success());
 
 	# The Book page
-    my $html = $mechanize->content();
+    my $html = $mech->content();
 #print STDERR "\n# content1=[\n$html\n]\n";
 
 	return $self->handler("Failed to find that book on Pearson Education website.")
@@ -133,7 +133,7 @@ sub search {
 		'isbn'			=> $data->{isbn13},
 		'author'		=> $data->{author},
 		'title'			=> $data->{title},
-		'book_link'		=> $mechanize->uri(),   #DETAIL . $data->{bookid},
+		'book_link'		=> $mech->uri(),   #DETAIL . $data->{bookid},
 		'image_link'	=> $data->{image},
 		'thumb_link'	=> $data->{thumb},
 		'description'	=> $data->{description},
@@ -169,6 +169,18 @@ L<WWW::Mechanize>
 L<WWW::Scraper::ISBN>,
 L<WWW::Scraper::ISBN::Record>,
 L<WWW::Scraper::ISBN::Driver>
+
+=head1 BUGS, PATCHES & FIXES
+
+There are no known bugs at the time of this release. However, if you spot a
+bug or are experiencing difficulties that are not explained within the POD
+documentation, please send an email to barbie@cpan.org or submit a bug to the
+RT system (http://rt.cpan.org/Public/Dist/Display.html?Name=WWW-Scraper-ISBN-Pearson_Driver).
+However, it would help greatly if you are able to pinpoint problems or even
+supply a patch.
+
+Fixes are dependant upon their severity and my availablity. Should a fix not
+be forthcoming, please feel free to (politely) remind me.
 
 =head1 AUTHOR
 
