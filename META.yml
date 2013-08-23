@@ -1,32 +1,32 @@
 --- #YAML:1.0
 name:                   WWW-Scraper-ISBN-Pearson_Driver
-version:                0.18
+version:                0.19
 abstract:               Search driver for the Pearson Education online book catalog
 author:
   - Barbie <barbie@cpan.org>
 
-license:                perl
+license:                artistic_2
 distribution_type:      module
 installdirs:            site
 
 requires:
-  Test::More:                   0.45
-  WWW::Mechanize:               1.60
-  WWW::Scraper::ISBN:           0.25
-  WWW::Scraper::ISBN::Driver:   0.18
+  perl:                           5.006
+  WWW::Mechanize:                 1.60
+  WWW::Scraper::ISBN:             0.25
+  WWW::Scraper::ISBN::Driver:     0.18
 recommends:
-  Test::More:                   0.70
-  Test::Pod:                    1.00
-  Test::Pod::Coverage:          0.08
-  Test::CPAN::Meta:             0.13
-  Test::CPAN::Meta::JSON:       0.10
+  Test::CPAN::Meta:               0
+  Test::CPAN::Meta::JSON:         0
+  Test::Pod:                      1.00
+  Test::Pod::Coverage:            0.08
 build_requires:
-  Test::More:                   0.45
+  IO::File:                       0
+  Test::More:                     0.70
 
 provides:
   WWW::Scraper::ISBN::Pearson_Driver:
     file:     lib/WWW/Scraper/ISBN/Pearson_Driver.pm
-    version:  0.18
+    version:  0.19
 no_index:
   directory:
     - t

@@ -1,7 +1,6 @@
 #!/usr/bin/perl -w
 use strict;
 
-use lib './t';
 use Test::More tests => 40;
 use WWW::Scraper::ISBN;
 
@@ -16,10 +15,10 @@ my %tests = (
         [ 'is',     'isbn10',       '1932394508'        ],
         [ 'is',     'isbn13',       '9781932394504'     ],
         [ 'is',     'ean13',        '9781932394504'     ],
-        [ 'is',     'title',        'Minimal Perl'            ],
-        [ 'is',     'author',       'Tim Maher'   ],
-        [ 'is',     'publisher',    'Pearson Education'    ],
-        [ 'is',     'pubdate',      'Oct 2006' ],
+        [ 'is',     'title',        'Minimal Perl'      ],
+        [ 'is',     'author',       'Tim Maher'         ],
+        [ 'is',     'publisher',    'Pearson Education' ],
+        [ 'is',     'pubdate',      'Oct 2006'          ],
         [ 'is',     'binding',      'Paperback'         ],
         [ 'is',     'pages',        undef               ],
         [ 'is',     'width',        undef               ],
@@ -35,18 +34,18 @@ my %tests = (
         [ 'is',     'isbn10',       '0672320673'        ],
         [ 'is',     'isbn13',       '9780672320675'     ],
         [ 'is',     'ean13',        '9780672320675'     ],
-        [ 'is',     'title',        q|Perl Developer's Dictionary|  ],
-        [ 'is',     'author',       'Clinton Pierce'    ],
-        [ 'is',     'publisher',    'Pearson Education'   ],
-        [ 'is',     'pubdate',      'Jul 2001'   ],
+        [ 'like',   'author',       qr/Clinton Pierce/  ],
+        [ 'like',   'title',        qr!Perl Developer.*?Dictionary! ],
+        [ 'is',     'publisher',    'Pearson Education' ],
+        [ 'is',     'pubdate',      'Jul 2001'          ],
         [ 'is',     'binding',      'Paperback'         ],
         [ 'is',     'pages',        640                 ],
-        [ 'is',     'width',        undef                 ],
-        [ 'is',     'height',       undef                 ],
-        [ 'is',     'weight',       undef                 ],
-        [ 'is',     'image_link',   'http://images.pearsoned-ema.com/jpeg/large/9780672320675.jpg' ],
-        [ 'is',     'thumb_link',   'http://images.pearsoned-ema.com/jpeg/small/9780672320675.jpg' ],
-        [ 'like',   'description',  qr|In addition to providing a complete syntax reference for all core Perl functions| ],
+        [ 'is',     'width',        undef               ],
+        [ 'is',     'height',       undef               ],
+        [ 'is',     'weight',       undef               ],
+        [ 'is',     'image_link',   'http://images.pearsoned-ema.com/jpeg/large/9780672320675.jpg'  ],
+        [ 'is',     'thumb_link',   'http://images.pearsoned-ema.com/jpeg/small/9780672320675.jpg'  ],
+        [ 'like',   'description',  qr|In addition to providing a complete syntax reference for all core Perl functions|    ],
         [ 'like',   'book_link',    qr|http://.*?item=246272| ]
     ],
 );
@@ -54,19 +53,18 @@ my %tests = (
 my $tests = 0;
 for my $isbn (keys %tests) { $tests += scalar( @{ $tests{$isbn} } ) + 2 }
 
-
 ###########################################################
 
 my $scraper = WWW::Scraper::ISBN->new();
 isa_ok($scraper,'WWW::Scraper::ISBN');
 
 SKIP: {
-	skip "Can't see a network connection", $tests+1   if(pingtest($CHECK_DOMAIN));
+    skip "Can't see a network connection", $tests+1   if(pingtest($CHECK_DOMAIN));
 
-	$scraper->drivers($DRIVER);
+    $scraper->drivers($DRIVER);
 
     # this ISBN doesn't exist
-	my $isbn = "1234567890";
+    my $isbn = "1234567890";
     my $record;
     eval { $record = $scraper->search($isbn); };
     if($@) {
@@ -75,11 +73,15 @@ SKIP: {
     elsif($record->found) {
         ok(0,'Unexpectedly found a non-existent book');
     } else {
-		like($record->error,qr/Failed to find that book|website appears to be unavailable/);
+        like($record->error,qr/Failed to find that book|website appears to be unavailable/);
     }
 
     for my $isbn (keys %tests) {
-        $record = $scraper->search($isbn);
+        eval { $record = $scraper->search($isbn); };
+        if($@) {
+            like($@,qr/Invalid ISBN specified/);
+        }
+
         my $error  = $record->error || '';
 
         SKIP: {

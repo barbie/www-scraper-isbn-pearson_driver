@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.18';
+$VERSION = '0.19';
 
 #--------------------------------------------------------------------------
 
@@ -51,8 +51,8 @@ use constant	DETAIL	=> 'http://www.pearsoned.co.uk/Bookshop/detail.asp?item=';
 
 =item C<search()>
 
-Creates a query string, then passes the appropriate form fields to the 
-Pearson Education server.
+Creates a query string, then passes the appropriate form fields to the Pearson
+Education server.
 
 The returned page should be the correct catalog page for that ISBN. If not the
 function returns zero and allows the next driver in the chain to have a go. If
@@ -94,7 +94,9 @@ sub search {
     return $self->handler("Pearson Education website appears to be unavailable.")
 	    if($@ || !$mech->success() || !$mech->content());
 
-	$mech->form_id('frmSearch');
+#print STDERR "\n# content=[\n".$mech->content()."\n]\n";
+
+	$mech->form_id('hipGlobalSearchForm');
 	$mech->set_fields( 'txtSearch' => $isbn );
 	
     eval { $mech->submit() };
@@ -103,19 +105,28 @@ sub search {
 
 	# The Book page
     my $html = $mech->content();
-#print STDERR "\n# content1=[\n$html\n]\n";
+#print STDERR "\n# html=[\n$html\n]\n";
 
 	return $self->handler("Failed to find that book on Pearson Education website.")
 		if($html =~ m!<p>Your search for <b>\d+</b> returned 0 results. Please search again.</p>!si);
 
     my $data;
-    ($data->{image},$data->{thumb})     = $html =~ m!<a id="large-jacket-img" href="(http://images.pearsoned-ema.com/jpeg/[^"]+)"><img src="(http://images.pearsoned-ema.com/jpeg/[^"]+)"!si;
-    ($data->{title})                    = $html =~ m!<div class="biblio">\s*<h1 class="larger bold">(.*?)</h1>!si;
-    ($data->{author},$data->{pubdate},$data->{binding},$data->{pages}) 
-                                        = $html =~ m!<h2 class="body"><a title=[^>]+>(.*?)</a></h2>([^,]+),\s*([^,<]+)(?:,\s*([^<]+)pages)?<br />!si;
-    ($data->{isbn13},$data->{isbn10})   = $html =~ m!ISBN13:\s*(\d+)\s*<br />ISBN10:\s*(\d+)!si;
-    ($data->{description})              = $html =~ m!<div class="desc-text"><p><p>([^<]+)!is;
-    ($data->{bookid})                   = $html =~ m!recommend.asp\?item=(\d+)!si;
+    ($data->{image})        = $html =~ m!"(http://images.pearsoned-ema.com/jpeg/large/\d+\.jpg)"!i;
+    ($data->{thumb})        = $html =~ m!"(http://images.pearsoned-ema.com/jpeg/small/\d+\.jpg)"!i;
+    ($data->{title},
+     $data->{author},
+     $data->{pubdate},
+     $data->{binding},
+     $data->{pages},
+     $data->{isbn13},
+     $data->{isbn10})       = $html =~ m!   <div\s*class="biblio">\s*
+                                                        <h1\s*class="larger\s*bold">(.*?)</h1>\s*(?:.*?<br\s*/>\s*)?
+                                                        <h2\s*class="body"><a\s*title[^>]+>(.*?)</a>\s*</h2>\s*
+                                                        ([^,]+),\s*([^,]+)(?:,\s*(\d+)\s+pages)?<br\s*/>\s*
+                                                        ISBN13:\s*(\d+)\s*<br\s*/>\s*
+                                                        ISBN10:\s*([\dX]+)\s*<br\s*/>!ix;
+    ($data->{description})  = $html =~ m!<div class="desc-text"><p><p>([^<]+)!is;
+    ($data->{bookid})       = $html =~ m!recommend.asp\?item=(\d+)!i;
 
 #use Data::Dumper;
 #print STDERR "\n# " . Dumper($data);
@@ -123,8 +134,18 @@ sub search {
 	return $self->handler("Could not extract data from Pearson Education result page.")
 		unless(defined $data);
 
+    # remove HTML tags
+    for(qw(author binding)) {
+        next unless(defined $data->{$_});
+        $data->{$_} =~ s!<[^>]+>!!g;
+    }
+
 	# trim top and tail
-	foreach (keys %$data) { next unless(defined $data->{$_});$data->{$_} =~ s/^\s+//;$data->{$_} =~ s/\s+$//; }
+	for(keys %$data) { 
+        next unless(defined $data->{$_});
+        $data->{$_} =~ s/^\s+//;
+        $data->{$_} =~ s/\s+$//; 
+    }
 
 	my $bk = {
 		'ean13'		    => $data->{isbn13},
@@ -179,7 +200,7 @@ RT system (http://rt.cpan.org/Public/Dist/Display.html?Name=WWW-Scraper-ISBN-Pea
 However, it would help greatly if you are able to pinpoint problems or even
 supply a patch.
 
-Fixes are dependant upon their severity and my availablity. Should a fix not
+Fixes are dependent upon their severity and my availability. Should a fix not
 be forthcoming, please feel free to (politely) remind me.
 
 =head1 AUTHOR
@@ -189,7 +210,7 @@ be forthcoming, please feel free to (politely) remind me.
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2004-2011 Barbie for Miss Barbell Productions
+  Copyright (C) 2004-2012 Barbie for Miss Barbell Productions
 
   This module is free software; you can redistribute it and/or
   modify it under the Artistic Licence v2.
