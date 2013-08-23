@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.11';
+$VERSION = '0.12';
 
 #--------------------------------------------------------------------------
 
@@ -25,20 +25,17 @@ Searches for book information from the Pearson Education's online catalog.
 #--------------------------------------------------------------------------
 
 ###########################################################################
-#Inheritence		                                                      #
-###########################################################################
+# Inheritence
 
 use base qw(WWW::Scraper::ISBN::Driver);
 
 ###########################################################################
-#Library Modules                                                          #
-###########################################################################
+# Modules
 
 use WWW::Mechanize;
 
 ###########################################################################
-#Constants                                                                #
-###########################################################################
+# Constants
 
 use constant	SEARCH	=> 'http://www.pearsoned.co.uk/Bookshop/';
 use constant	DETAIL	=> 'http://www.pearsoned.co.uk/Bookshop/detail.asp?item=';
@@ -46,8 +43,7 @@ use constant	DETAIL	=> 'http://www.pearsoned.co.uk/Bookshop/detail.asp?item=';
 #--------------------------------------------------------------------------
 
 ###########################################################################
-#Interface Functions                                                      #
-###########################################################################
+# Public Interface
 
 =head1 METHODS
 
@@ -62,8 +58,10 @@ The returned page should be the correct catalog page for that ISBN. If not the
 function returns zero and allows the next driver in the chain to have a go. If
 a valid page is returned, the following fields are returned via the book hash:
 
+  isbn          (now returns isbn13)
+  isbn10        
   isbn13
-  isbn
+  ean13         (industry name)
   author
   title
   book_link
@@ -71,6 +69,11 @@ a valid page is returned, the following fields are returned via the book hash:
   description
   pubdate
   publisher
+  binding       (if known)
+  pages         (if known)
+  weight        (if known) (in grammes)
+  width         (if known) (in millimetres)
+  height        (if known) (in millimetres)
 
 The book_link and image_link refer back to the Pearson Education UK website.
 
@@ -91,7 +94,7 @@ sub search {
     return $self->handler("Pearson Education website appears to be unavailable.")
 	    unless($mechanize->success());
 
-	$mechanize->form_name('frmSearch');
+	$mechanize->form_id('frmSearch');
 	$mechanize->set_fields( 'txtSearch' => $isbn );
 	$mechanize->submit();
 
@@ -103,28 +106,31 @@ sub search {
 #print STDERR "\n# content1=[\n$html\n]\n";
 
 	return $self->handler("Failed to find that book on Pearson Education website.")
-		if($html =~ m!<span class='trail2'>Advanced Search</span>!si);
+		if($html =~ m!<p>Your search for <b>\d+</b> returned 0 results. Please search again.</p>!si);
 
     my $data;
-    ($data->{image},$data->{thumb})    = $html =~ m!<a href="(http://images.pearsoned-ema.com/jpeg/[^"]+)"><img src="(http://images.pearsoned-ema.com/jpeg/[^"]+)"!i;
-    ($data->{title})                   = $html =~ m!<H1 class='largerbodybold'>(.*?)</H1>!i;
-    ($data->{author},$data->{pubdate}) = $html =~ m!<H2 class='body' ><a title=[^>]+>(.*?)</a></H2><span class='body'>(.*?)</span>!i;
-    ($data->{isbn13},$data->{isbn10})  = $html =~ m!ISBN13: ([\d]+)</span><br><span class = 'body'>ISBN10: ([-\d]+)</span>!i;
-    ($data->{description})             = $html =~ m!<a name='Description'></a><span class='bodybold'>Description</span><br>(.*?)</td>!is;
-    ($data->{bookid})                  = $html =~ m!recommend.asp\?item=(\d+)!i;
+    ($data->{image},$data->{thumb})     = $html =~ m!<a href="(http://images.pearsoned-ema.com/jpeg/[^"]+)"><img src="(http://images.pearsoned-ema.com/jpeg/[^"]+)"!i;
+    ($data->{title})                    = $html =~ m!<div class="biblio">\s*<h1 class="larger bold">(.*?)</h1>!i;
+    ($data->{author},$data->{pubdate},$data->{binding},$data->{pages}) 
+                                        = $html =~ m!<h2 class="body"><a title=[^>]+>(.*?)</a></h2>([^,]+),\s*([^,<]+)(?:,\s*([^<]+)pages)?<br />!i;
+    ($data->{isbn13},$data->{isbn10})   = $html =~ m!ISBN13:\s*(\d+)\s*<br />ISBN10:\s*(\d+)!i;
+    ($data->{description})              = $html =~ m!<div class="desc-text"><p><p>([^<]+)!is;
+    ($data->{bookid})                   = $html =~ m!recommend.asp\?item=(\d+)!i;
 
-    if($data->{description}) {
-        $data->{description} =~ s!^.*?<P>(.*?)</P>.*!$1!gis;
-        $data->{description} =~ s!\s+$!!gis;
-    }
+#use Data::Dumper;
+#print STDERR "\n# " . Dumper($data);
 
 	return $self->handler("Could not extract data from Pearson Education result page.")
 		unless(defined $data);
 
+	# trim top and tail
+	foreach (keys %$data) { next unless(defined $data->{$_});$data->{$_} =~ s/^\s+//;$data->{$_} =~ s/\s+$//; }
+
 	my $bk = {
+		'ean13'		    => $data->{isbn13},
 		'isbn13'		=> $data->{isbn13},
 		'isbn10'		=> $data->{isbn10},
-		'isbn'			=> $data->{isbn10},
+		'isbn'			=> $data->{isbn13},
 		'author'		=> $data->{author},
 		'title'			=> $data->{title},
 		'book_link'		=> $mechanize->uri(),   #DETAIL . $data->{bookid},
@@ -133,6 +139,11 @@ sub search {
 		'description'	=> $data->{description},
 		'pubdate'		=> $data->{pubdate},
 		'publisher'		=> q!Pearson Education!,
+		'binding'	    => $data->{binding},
+		'pages'		    => $data->{pages},
+		'weight'		=> $data->{weight},
+		'width'		    => $data->{width},
+		'height'		=> $data->{height}
 	};
 
 #use Data::Dumper;
@@ -166,13 +177,9 @@ L<WWW::Scraper::ISBN::Driver>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2004-2007 Barbie for Miss Barbell Productions
+  Copyright (C) 2004-2010 Barbie for Miss Barbell Productions
 
   This module is free software; you can redistribute it and/or
-  modify it under the same terms as Perl itself.
-
-The full text of the licenses can be found in the F<Artistic> file included
-with this module, or in L<perlartistic> as part of Perl installation, in
-the 5.8.1 release or later.
+  modify it under the Artistic Licence v2.
 
 =cut

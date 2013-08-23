@@ -1,55 +1,63 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Pearson_Driver.
 
+0.12    30/07/2010
+        - updates to parser for Pearson site.
+        - added fields (if known) for binding, pages, weight, width & height.
+        - added ean13, which is the industry name for isbn-13.
+        - more tests.
+        - removal of Template::Extract references.
+        - various package file changes (inc adding META.json).
+
 0.11	14/08/2009
-	- minor fixes to parsing of Pearson website.
-	- added ping tests, to avoid failing when no network connection.
-	- real failures produce diagnostics not skips now.
-	- added more package tests.
+        - minor fixes to parsing of Pearson website.
+        - added ping tests, to avoid failing when no network connection.
+        - real failures produce diagnostics not skips now.
+        - added more package tests.
 
 0.10	27/06/2008
-	- added checks to only run extra tests under AUTOMATED_TESTING
-	- switched metatest to use Test-CPAN-Meta
-	- upped META.ym spec version and link
-	- added isbn10 key into book data
-	- attempt to catch bad ISBN in tests where Business::ISBN is installed,
-	  which is now used by the new version of WWW::Scraper::ISBN.
+        - added checks to only run extra tests under AUTOMATED_TESTING
+        - switched metatest to use Test-CPAN-Meta
+        - upped META.ym spec version and link
+        - added isbn10 key into book data
+        - attempt to catch bad ISBN in tests where Business::ISBN is installed,
+          which is now used by the new version of WWW::Scraper::ISBN.
 
 0.09	26/07/2007
-	- added test to check for non-existent ISBNs
-	- updated first book test to a new book, Perl Medic looks to be out of 
-	  print :(
+        - added test to check for non-existent ISBNs
+        - updated first book test to a new book, Perl Medic looks to be out of 
+          print :(
 
 0.08	01/03/2007
-	- Handwritten META.yml to conform to current specs.
-	- Changed all instances of LICENCE to LICENSE.
-	- Added META.yml test script.
-	- Added LICENSE and Artistic files.
-	- Added an examples directory. Nothing in it yet, except a request
-	  for interesting scripts.
-	- Updated the pattern matching code now that Yahoo have changed their 
-	  page layouts.
-	- Added better error reporting.
-	- Removed dependency on Template::Extract.
-	- Devel::Cover = 95.2%
+        - Handwritten META.yml to conform to current specs.
+        - Changed all instances of LICENCE to LICENSE.
+        - Added META.yml test script.
+        - Added LICENSE and Artistic files.
+        - Added an examples directory. Nothing in it yet, except a request
+          for interesting scripts.
+        - Updated the pattern matching code now that Yahoo have changed their 
+          page layouts.
+        - Added better error reporting.
+        - Removed dependency on Template::Extract.
+        - Devel::Cover = 95.2%
 
 0.07	02/03/2005
-	- book_link made from bookid stored in the page
+        - book_link made from bookid stored in the page
 
 0.06	07/01/2001  
-	- handler() moved to WWW::Scraper::ISBN::Driver
-	- test suite updated to peform skips if can't access web pages
+        - handler() moved to WWW::Scraper::ISBN::Driver
+        - test suite updated to peform skips if can't access web pages
 
 0.05	31/08/2004
-	- Simplified error handling
+        - Simplified error handling
 
 0.04	07/06/2004
-	- Simplified extract string
+        - Simplified extract string
 
 0.03	10/05/2004
-	- Added publisher attribute
+        - Added publisher attribute
 
 0.02	07/04/2004
-	- can't remember!
+        - can't remember!
 
 0.01	07/04/2004
-	- original version
+        - original version

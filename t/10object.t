@@ -2,7 +2,7 @@
 use strict;
 
 use lib './t';
-use Test::More tests => 22;
+use Test::More tests => 38;
 
 ###########################################################
 
@@ -11,7 +11,7 @@ my $scraper = WWW::Scraper::ISBN->new();
 isa_ok($scraper,'WWW::Scraper::ISBN');
 
 SKIP: {
-	skip "Can't see a network connection", 21   if(pingtest());
+	skip "Can't see a network connection", 37   if(pingtest());
 
 	$scraper->drivers("Pearson");
 
@@ -38,17 +38,25 @@ SKIP: {
 		is($record->found_in,'Pearson');
 
 		my $book = $record->book;
-		is($book->{'isbn'},'1932394508');
-		is($book->{'title'},'Minimal Perl');
-		is($book->{'author'},'Tim Maher');
-		is($book->{'book_link'},'http://www.pearsoned.co.uk/Bookshop/detail.asp?item=100000000120863');
-		is($book->{'image_link'},'http://images.pearsoned-ema.com/jpeg/large/9781932394504.jpg');
-		is($book->{'thumb_link'},'http://images.pearsoned-ema.com/jpeg/small/9781932394504.jpg');
+		is($book->{'isbn'},         '9781932394504'         ,'.. isbn found');
+		is($book->{'isbn10'},       '1932394508'            ,'.. isbn10 found');
+		is($book->{'isbn13'},       '9781932394504'         ,'.. isbn13 found');
+		is($book->{'ean13'},        '9781932394504'         ,'.. ean13 found');
+		is($book->{'title'},        'Minimal Perl'          ,'.. title found');
+		is($book->{'author'},       'Tim Maher'             ,'.. author found');
+		like($book->{'book_link'},  qr|http://.*?item=100000000120863|);
+		is($book->{'image_link'},   'http://images.pearsoned-ema.com/jpeg/large/9781932394504.jpg');
+		is($book->{'thumb_link'},   'http://images.pearsoned-ema.com/jpeg/small/9781932394504.jpg');
 		like($book->{'description'},qr|Most books make Perl unnecessarily hard to learn by attempting|);
-		is($book->{'pubdate'},'Oct 2006');
+		is($book->{'pubdate'},      'Oct 2006'              ,'.. pubdate found');
+		is($book->{'binding'},      'Paperback'             ,'.. binding found');
+		is($book->{'pages'},        undef                   ,'.. pages found');
+		is($book->{'width'},        undef                   ,'.. width found');
+		is($book->{'height'},       undef                   ,'.. height found');
+		is($book->{'weight'},       undef                   ,'.. weight found');
 	}
 
-	$isbn = "0672320673";
+	$isbn = "9780672320675";
 	$record = $scraper->search($isbn);
 
     unless($record->found) {
@@ -58,14 +66,22 @@ SKIP: {
 		is($record->found_in,'Pearson');
 
 		my $book = $record->book;
-		is($book->{'isbn'},'0672320673');
-		is($book->{'title'},q|Perl Developer's Dictionary|);
-		like($book->{'author'},qr/Clinton Pierce/);
-		is($book->{'book_link'},'http://www.pearsoned.co.uk/Bookshop/detail.asp?item=246272');
-		is($book->{'image_link'},'http://images.pearsoned-ema.com/jpeg/large/9780672320675.jpg');
-		is($book->{'thumb_link'},'http://images.pearsoned-ema.com/jpeg/small/9780672320675.jpg');
+		is($book->{'isbn'},         '9780672320675'         ,'.. isbn found');
+		is($book->{'isbn10'},       '0672320673'            ,'.. isbn10 found');
+		is($book->{'isbn13'},       '9780672320675'         ,'.. isbn13 found');
+		is($book->{'ean13'},        '9780672320675'         ,'.. ean13 found');
+		like($book->{'author'},     qr/Clinton Pierce/      ,'.. author found');
+		is($book->{'title'},        q|Perl Developer's Dictionary|  ,'.. title found');
+		like($book->{'book_link'},  qr|http://.*?item=246272|);
+		is($book->{'image_link'},   'http://images.pearsoned-ema.com/jpeg/large/9780672320675.jpg');
+		is($book->{'thumb_link'},   'http://images.pearsoned-ema.com/jpeg/small/9780672320675.jpg');
 		like($book->{'description'},qr|In addition to providing a complete syntax reference for all core Perl functions|);
-		is($book->{'pubdate'},'Jul 2001');
+		is($book->{'pubdate'},      'Jul 2001'              ,'.. pubdate found');
+		is($book->{'binding'},      'Paperback'             ,'.. binding found');
+		is($book->{'pages'},        640                     ,'.. pages found');
+		is($book->{'width'},        undef                   ,'.. width found');
+		is($book->{'height'},       undef                   ,'.. height found');
+		is($book->{'weight'},       undef                   ,'.. weight found');
 
         #use Data::Dumper;
         #diag("book=[".Dumper($book)."]");
