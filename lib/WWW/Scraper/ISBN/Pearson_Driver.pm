@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.09';
+$VERSION = '0.10';
 
 #--------------------------------------------------------------------------
 
@@ -55,7 +55,7 @@ use constant	DETAIL	=> 'http://www.pearsoned.co.uk/Bookshop/detail.asp?item=';
 
 =item C<search()>
 
-Creates a query string, then passes the appropriate form fields to the Pearson 
+Creates a query string, then passes the appropriate form fields to the Pearson
 Education server.
 
 The returned page should be the correct catalog page for that ISBN. If not the
@@ -72,7 +72,7 @@ a valid page is returned, the following fields are returned via the book hash:
   pubdate
   publisher
 
-The book_link and image_link refer back to the Pearson Education UK website. 
+The book_link and image_link refer back to the Pearson Education UK website.
 
 =back
 
@@ -122,6 +122,7 @@ sub search {
 
 	my $bk = {
 		'isbn13'		=> $data->{isbn13},
+		'isbn10'		=> $data->{isbn10},
 		'isbn'			=> $data->{isbn10},
 		'author'		=> $data->{author},
 		'title'			=> $data->{title},
@@ -166,11 +167,11 @@ L<WWW::Scraper::ISBN::Driver>
 
   Copyright (C) 2004-2007 Barbie for Miss Barbell Productions
 
-  This module is free software; you can redistribute it and/or 
+  This module is free software; you can redistribute it and/or
   modify it under the same terms as Perl itself.
 
-The full text of the licenses can be found in the F<Artistic> file included 
-with this module, or in L<perlartistic> as part of Perl installation, in 
+The full text of the licenses can be found in the F<Artistic> file included
+with this module, or in L<perlartistic> as part of Perl installation, in
 the 5.8.1 release or later.
 
 =cut

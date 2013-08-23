@@ -1,5 +1,13 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Pearson_Driver.
 
+0.10	current
+	- added checks to only run extra tests under AUTOMATED_TESTING
+	- switched metatest to use Test-CPAN-Meta
+	- upped META.ym spec version and link
+	- added isbn10 key into book data
+	- attempt to catch bad ISBN in tests where Business::ISBN is installed,
+	  which is now used by the new version of WWW::Scraper::ISBN.
+
 0.09	26/07/2007
 	- added test to check for non-existent ISBNs
 	- updated first book test to a new book, Perl Medic looks to be out of 

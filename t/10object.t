@@ -14,8 +14,12 @@ use Test::More tests => 22;
 
     # this ISBN doesn't exist
 	my $isbn = "1234567890";
-	my $record = $scraper->search($isbn);
-    if($record->found) {
+    my $record;
+    eval { $record = $scraper->search($isbn); };
+    if($@) {
+        like($@,qr/Invalid ISBN specified/);
+    }
+    elsif($record->found) {
         ok(0,'Unexpectedly found a non-existent book');
     } else {
 		like($record->error,qr/Failed to find that book on Pearson Education website/);
