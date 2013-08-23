@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.16';
+$VERSION = '0.17';
 
 #--------------------------------------------------------------------------
 
@@ -51,8 +51,8 @@ use constant	DETAIL	=> 'http://www.pearsoned.co.uk/Bookshop/detail.asp?item=';
 
 =item C<search()>
 
-Creates a query string, then passes the appropriate form fields to the Pearson
-Education server.
+Creates a query string, then passes the appropriate form fields to the 
+Pearson Education server.
 
 The returned page should be the correct catalog page for that ISBN. If not the
 function returns zero and allows the next driver in the chain to have a go. If
