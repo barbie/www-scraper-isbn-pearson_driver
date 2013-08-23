@@ -5,12 +5,11 @@ WriteMakefile(
     'NAME'			=> 'WWW::Scraper::ISBN::Pearson_Driver',
     'VERSION_FROM'	=> 'lib/WWW/Scraper/ISBN/Pearson_Driver.pm', # finds $VERSION
     'PREREQ_PM'		=> {
-
-		WWW::Scraper::ISBN			=> 0.23,
-		WWW::Scraper::ISBN::Driver	=> 0.16,
+		WWW::Scraper::ISBN			=> 0.25,
+		WWW::Scraper::ISBN::Driver	=> 0.18,
 		WWW::Mechanize				=> 0,
 		Template::Extract			=> 0,
-
+		Test::More					=> 0.45,	# for testing
 	},
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
       (ABSTRACT => q|Search driver for Pearson Education's online catalog|, # retrieve abstract from module
