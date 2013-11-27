@@ -3,6 +3,7 @@ Revision history for WWW::Scraper::ISBN::Pearson_Driver
 
         - META updates.
         - added git repository links to metadata.
+        - added isbn-check.pl to examples.
 
 0.19    2012-12-16
         - updated regex for site changes.
