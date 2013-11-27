@@ -212,7 +212,7 @@ be forthcoming, please feel free to (politely) remind me.
 
   Copyright (C) 2004-2012 Barbie for Miss Barbell Productions
 
-  This module is free software; you can redistribute it and/or
+  This distribution is free software; you can redistribute it and/or
   modify it under the Artistic Licence v2.
 
 =cut
