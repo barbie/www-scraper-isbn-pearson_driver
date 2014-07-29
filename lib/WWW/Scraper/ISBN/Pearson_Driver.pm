@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.20';
+$VERSION = '0.21';
 
 #--------------------------------------------------------------------------
 
