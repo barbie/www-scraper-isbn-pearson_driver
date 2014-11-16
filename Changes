@@ -1,6 +1,8 @@
 Revision history for WWW-Scraper-ISBN-Pearson_Driver
 ====================================================
 
+        - fixed license fields in META.json to be lists.
+
 0.21    2014-07-29
         - fixed distribution name in META.
         - upgrade to WWW-Scraper-ISBN-1.00.
