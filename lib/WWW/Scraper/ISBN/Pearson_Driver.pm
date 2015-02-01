@@ -118,13 +118,11 @@ sub search {
      $data->{pubdate},
      $data->{binding},
      $data->{pages},
-     $data->{isbn13},
-     $data->{isbn10})       = $html =~ m!   <div\s*class="biblio">\s*
+     $data->{isbn13})       = $html =~ m!   <div\s*class="biblio">\s*
                                                         <h1\s*class="larger\s*bold">(.*?)</h1>\s*(?:.*?<br\s*/>\s*)?
                                                         <h2\s*class="body"><a\s*title[^>]+>(.*?)</a>\s*</h2>\s*
-                                                        ([^,]+),\s*([^,]+)(?:,\s*(\d+)\s+pages)?<br\s*/>\s*
-                                                        ISBN13:\s*(\d+)\s*<br\s*/>\s*
-                                                        ISBN10:\s*([\dX]+)\s*<br\s*/>!ix;
+                                                        ([^,]+),\s*([^,]+)(?:,\s*(\d+)\s+pages)?(?:</a>)?<br\s*/>\s*
+                                                        ISBN(?:13)?:\s*(\d+)\s*<br\s*/>!ix;
     ($data->{description})  = $html =~ m!<div class="desc-text"><p><p>([^<]+)!is;
     ($data->{bookid})       = $html =~ m!recommend.asp\?item=(\d+)!i;
 
@@ -152,7 +150,7 @@ sub search {
 	my $bk = {
 		'ean13'		    => $data->{isbn13},
 		'isbn13'		=> $data->{isbn13},
-		'isbn10'		=> $data->{isbn10},
+		'isbn10'		=> $self->convert_to_isbn10( $data->{isbn13} ),
 		'isbn'			=> $data->{isbn13},
 		'author'		=> $data->{author},
 		'title'			=> $data->{title},
