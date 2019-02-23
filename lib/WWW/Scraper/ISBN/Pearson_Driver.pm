@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.23';
+$VERSION = '0.24';
 
 #--------------------------------------------------------------------------
 
@@ -211,7 +211,7 @@ be forthcoming, please feel free to (politely) remind me.
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2004-2015 Barbie for Miss Barbell Productions
+  Copyright (C) 2004-2019 Barbie for Miss Barbell Productions
 
   This distribution is free software; you can redistribute it and/or
   modify it under the Artistic Licence v2.
